@@ -1,0 +1,28 @@
+name: trialsieve
+channels:
+  - defaults
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  - python=3.11
+  - torchaudio
+  - pytorch
+  - pytorch-cuda=11.7
+  - torchvision
+  - ipykernel
+  - datasets
+  - transformers
+  - evaluate
+  - huggingface_hub
+  - pandas
+  - numpy
+pip:
+  - ujson
+  - lightning
+  - spacy
+  - https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.1/en_core_sci_sm-0.5.1.tar.gz
+  - pip install seqeval
+  - wandb
+  - accelerate
+prefix: trialsieve

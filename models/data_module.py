@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import torch
 import ujson
+import spacy
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
@@ -19,16 +20,14 @@ from transformers import (
 )
 from tqdm import tqdm
 from functools import partial
-
-import spacy
-
-sci_nlp = spacy.load("en_core_sci_sm")  # scispacy
-
 from logger import setup_logger
 
+# Setup
+sci_nlp = spacy.load("en_core_sci_sm")  # scispacy
 logger = setup_logger()
 
 
+# Helper Functions
 def get_sent_boundaries(sci_nlp, text):
     """
     Returns char indices for start and end of sentences from the full text.
@@ -60,6 +59,9 @@ def get_sent_boundaries(sci_nlp, text):
 
 
 def get_abstract_split(abstract, tokenizer, max_len=500):
+    """
+    Split abstract into chunks along sentence boundaries if longer than max_len
+    """
     text = abstract["text"]
     boundaries = get_sent_boundaries(sci_nlp, text)
     split_inds = [0]
@@ -74,6 +76,9 @@ def get_abstract_split(abstract, tokenizer, max_len=500):
 
 
 def update_offsets(abstract, split_inds):
+    """
+    Update character offsets of annotations afte splitting abstract into chunks
+    """
     chunks = []
     spans = abstract["spans"]
     num_splits = len(split_inds)
@@ -116,9 +121,6 @@ class NERDataset(Dataset):
         for x in data:
             if "pmid" not in x:
                 print(x)
-        # self._ind_to_pmid = {i: x["pmid"] for i, x in enumerate(self.data)}
-        # self.text = [x["text"] for x in self.data]
-        # self.token_labels = [x["token_labels"] for x in self.data]
 
     def __len__(self):
         return len(self.data)
@@ -127,11 +129,6 @@ class NERDataset(Dataset):
         return self.data[index]["text"], torch.LongTensor(
             self.data[index]["token_labels"]
         )
-
-    # def __getitem__(self, index):
-    #     text = self.data[index]["text"]
-    #     labels = torch.LongTensor(self.data[index]["token_labels"])
-    #     return {"text": text, "labels": labels}
 
 
 class NERDataModule(pl.LightningDataModule):
@@ -304,33 +301,12 @@ class NERDataModule(pl.LightningDataModule):
             self.test, batch_size=self.batch_size, collate_fn=self.collate_fn
         )
 
-    # def predict_dataloader(self):
-    #     return DataLoader(self.mnist_predict, batch_size=self.batch_size)
-
-    # def teardown(self, stage: str):
-    #     # Used to clean-up when the run is finished
-    #     ...
-
 
 def token_classification_collate_fn(batch, tokenizer):
+    """
+    Collate function for token classification
+    """
     text, labels = zip(*batch)
     output_dict = tokenizer(text, padding="longest", return_tensors="pt")
     output_dict["labels"] = pad_sequence(labels, batch_first=True, padding_value=-100)
-    # output_dict["attention_mask"] = output_dict["attention_mask"].to(float)
     return output_dict
-
-
-if __name__ == "__main__":
-    data_module = NERDataModule(
-        "../data/230603_data_v1.json",
-        hf_model="dmis-lab/biobert-base-cased-v1.2",
-        debug=True,
-    )
-    data_module.setup()
-    loader = data_module.train_dataloader()
-    for i, batch in enumerate(loader):
-        if i == 0:
-            for key, val in batch.items():
-                print(key, val.size())
-        else:
-            pass

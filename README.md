@@ -1,5 +1,7 @@
 # TrialSieve
-NER on clinical cohort studies for automated meta-analysis of clinical literature
+NER on clinical cohort studies for automated meta-analysis of clinical literature.  
+
+This repository will be updated on a rolling basis as new annoatations are processed.
 
 ![TrialSieve](trialsieve.png)
 

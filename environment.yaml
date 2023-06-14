@@ -25,4 +25,5 @@ pip:
   - pip install seqeval
   - wandb
   - accelerate
+  - tqdm
 prefix: trialsieve

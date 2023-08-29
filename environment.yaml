@@ -1,4 +1,4 @@
-name: trialsieve
+name: trialsieve_1
 channels:
   - defaults
   - pytorch
@@ -17,13 +17,14 @@ dependencies:
   - huggingface_hub
   - pandas
   - numpy
-pip:
-  - ujson
-  - lightning
-  - spacy
-  - https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.1/en_core_sci_sm-0.5.1.tar.gz
-  - pip install seqeval
-  - wandb
-  - accelerate
-  - tqdm
-prefix: trialsieve
+  - pip 
+  - pip:
+    - ujson
+    - lightning
+    - spacy
+    - https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.1/en_core_sci_sm-0.5.1.tar.gz
+    - seqeval
+    - wandb
+    - accelerate
+    - tqdm
+prefix: trialsieve_1

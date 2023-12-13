@@ -82,7 +82,7 @@ def compute_metrics(p, id2label, mode="eval"):
 for hf_model in models:
     # Set up dataloaders
     data_module = NERDataModule(
-        "data/preprocessed_for_modeling.json",
+        "data/processed_for_modeling.json",
         hf_model=hf_model,
         debug=False,
     )
